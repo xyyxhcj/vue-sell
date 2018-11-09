@@ -1,0 +1,28 @@
+body, html
+  line-height: 1
+  font-weight: 200
+  font-family: 'PingFang SC', 'STHeitiSC-Light', 'Heilvetica-Light', 'Arial', 'sans-serif'
+
+//定义清除浮动的样式,实现sticky footers设计
+.clearfix
+  display: inline-block
+  &:after
+    display: block
+    content: '.'
+    height: 0
+    line-height: 0
+    clear: both
+    visibility: hidden
+
+// 定义缩放的全局样式,根据物理设备的dpr进行缩放,获取手机的像素密度:alert(window.devicePixelRatio);
+@media (-webkit-min-device-pixel-ratio: 1.5),(min-device-pixel-ratio: 1.5)
+  .border-1px
+    &::after
+      -webkit-transform: scaleY(0.7)
+      transform: scaleY(0.7)
+
+@media (-webkit-min-device-pixel-ratio: 2),(min-device-pixel-ratio: 2)
+  .border-1px
+    &::after
+      -webkit-transform: scaleY(0.5)
+      transform: scaleY(0.5)
