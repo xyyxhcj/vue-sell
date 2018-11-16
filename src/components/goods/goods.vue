@@ -14,7 +14,8 @@
         <li v-for="(item,index) in goods" class="food-list" :key="index" ref="food-list-hook">
           <h1 class="title">{{item.name}}</h1>
           <ul>
-            <li v-for="(food,index_f) in item.foods" class="food-item border-1px" :key="index_f">
+            <li v-for="(food,index_f) in item.foods" class="food-item border-1px" :key="index_f"
+                @click="selectFood(food,$event)">
               <div class="icon">
                 <img width="57" height="57" :src="food.icon"/>
               </div>
@@ -22,11 +23,15 @@
                 <h2 class="name">{{food.name}}</h2>
                 <p class="desc">{{food.description}}</p>
                 <div class="extra">
-                  <span class="count">月售{{food.sellCount}}份</span><span>好评率{{food.sellCount}}%</span>
+                  <span class="count">月售{{food.sellCount}}份</span><span>好评率{{food.rating ? food.rating : 0}}%</span>
                 </div>
                 <div class="price">
                   <span class="now"><span class="char">￥</span>{{food.price}}</span><span class="old"
                                                                                           v-show="food.oldPrice">￥{{food.oldPrice}}</span>
+                </div>
+                <div class="cartControl-wrapper">
+                  <!--'@cart-add="_drop"':用于侦听子组件传递的事件-->
+                  <cart-control :food="food" @cart-add="_drop"></cart-control>
                 </div>
               </div>
             </li>
@@ -34,7 +39,9 @@
         </li>
       </ul>
     </div>
-    <shop-cart :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"></shop-cart>
+    <shop-cart ref="shopCart" :delivery-price="seller.deliveryPrice" :min-price="seller.minPrice"
+               :select-foods="selectFoods"></shop-cart>
+    <food :food="selectedFood" ref="food" @cart-add="_drop"></food>
   </div>
 </template>
 
@@ -42,8 +49,9 @@
   import classMap from '@/components/classMap/classMap';
   import BScroll from 'better-scroll'; // 滚动条JS
   import shopCart from '@/components/shopCart/shopCart';
-
-  const SUCCESS = 0;
+  import cartControl from '@/components/cartControl/cartControl';
+  import food from '@/components/food/food';
+  import {CONSTANT} from '@/common/js/constant';
 
   // 二分查找
   function binarySearch(list, target, begin = 0, end = null) {
@@ -76,13 +84,14 @@
         heightList: [],
         heightElements: [],
         menuElements: [],
-        scrollY: 0
+        scrollY: 0,
+        selectedFood: {}
       };
     },
     created() {
       this.$http.get('/api/goods').then(response => {
         let result = response.body;
-        if (SUCCESS === result.errno) {
+        if (CONSTANT.RESULT_CODE.SUCCESS === result.errno) {
           this.$data.goods = result.data;
           // 当dom渲染完毕时再执行
           this.$nextTick(() => {
@@ -94,7 +103,7 @@
       });
     },
     components: {
-      classMap, shopCart
+      classMap, shopCart, cartControl, food
     },
     methods: {
       // 初始化滚动条
@@ -103,7 +112,7 @@
         this.menuScroll = new BScroll('.menu-wrapper', {click: true});
         // 'probeType: 3':开启实时获取滚动位置; 默认0,不派发scroll事件
         // probeType:为1时会非实时派发scroll事件;为2时会实时派发scroll事件;为3时在屏幕滑动和momentum滚动动画运行过程中实时派发scroll事件
-        this.foodScroll = new BScroll('.foods-wrapper', {probeType: 3});
+        this.foodScroll = new BScroll('.foods-wrapper', {probeType: 3, click: true});
         // 监听滚动事件,获取Y坐标
         this.foodScroll.on('scroll', position => {
           this.scrollY = Math.abs(Math.round(position.y));
@@ -138,6 +147,18 @@
         if ((targetY > currentY && (targetY - currentY) > 324) || targetY < currentY) {
           this.menuScroll.scrollToElement(this.menuElements[index], 300);
         }
+      },
+      _drop(target) {
+        // 'this.$nextTick':异步执行下落动画
+        this.$nextTick(() => {
+          this.$refs.shopCart.drop(target);
+        });
+      },
+      selectFood(food, event) {
+        if (event._constructed) {
+          this.selectedFood = food;
+          this.$refs.food.show();
+        }
       }
     },
     computed: {
@@ -149,6 +170,17 @@
         } else {
           return -searchResult - 2;
         }
+      },
+      selectFoods() {
+        let foods = [];
+        this.goods.forEach(good => {
+          good.foods.forEach(food => {
+            if (food.count && food.count > 0) {
+              foods.push(food);
+            }
+          });
+        });
+        return foods;
       }
     }
   };
@@ -250,4 +282,8 @@
               text-decoration: line-through
               font-size: 10px
               color: rgb(147, 153, 159)
+          .cartControl-wrapper
+            position: absolute
+            right: 0
+            bottom: 12px
 </style>

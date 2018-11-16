@@ -21,8 +21,8 @@
 <script>
   // 注册header组件
   import header from './components/header/header';
+  import {CONSTANT} from '@/common/js/constant';
 
-  const SUCCESS = 0;
   export default {
     data() {
       return {
@@ -32,7 +32,7 @@
     created() {
       this.$http.get('/api/seller').then(response => {
         let result = response.body;
-        if (SUCCESS === result.errno) {
+        if (CONSTANT.RESULT_CODE.SUCCESS === result.errno) {
           this.$data.seller = result.data;
         }
       }, response => {
