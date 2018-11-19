@@ -13,8 +13,10 @@
         <router-link to="/seller">商家</router-link>
       </div>
     </div>
-    <!--router-view:路由出口,渲染路由匹配到的组件-->
-    <router-view :seller="seller"></router-view>
+    <!--router-view:路由出口,渲染路由匹配到的组件; 'keep-alive':切换组件时保留数据-->
+    <keep-alive>
+      <router-view :seller="seller"></router-view>
+    </keep-alive>
   </div>
 </template>
 
@@ -22,18 +24,26 @@
   // 注册header组件
   import header from './components/header/header';
   import {CONSTANT} from '@/common/js/constant';
+  import {urlParse} from '@/common/js/utils';
 
   export default {
     data() {
       return {
-        seller: {}
+        seller: {
+          id: (() => {
+            // 从请求url中提取id参数
+            let queryParam = urlParse();
+            return queryParam.id;
+          })()
+        }
       };
     },
     created() {
-      this.$http.get('/api/seller').then(response => {
+      this.$http.get('/api/seller?id=' + this.seller.id).then(response => {
         let result = response.body;
         if (CONSTANT.RESULT_CODE.SUCCESS === result.errno) {
-          this.$data.seller = result.data;
+          // 'Object.assign':为对象扩展属性(不删除原属性)
+          this.seller = Object.assign({}, this.seller, result.data);
         }
       }, response => {
       });
