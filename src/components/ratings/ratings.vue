@@ -79,7 +79,7 @@
       };
     },
     created() {
-      this.$http.get('/api/ratings').then(response => {
+      this.$http.get(process.env.HOST + '/api/ratings').then(response => {
         let result = response.body;
         if (CONSTANT.RESULT_CODE.SUCCESS === result.errno) {
           this.$data.ratings = result.data;

@@ -51,10 +51,11 @@ module.exports = {
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    // 'assetsPublicPath'配置资源文件在项目中的引用位置为相对路径
+    assetsPublicPath: './',
 
     /**
-     * Source Maps
+     * Source Maps,'productionSourceMap'值为false表示不可调试
      */
 
     productionSourceMap: true,

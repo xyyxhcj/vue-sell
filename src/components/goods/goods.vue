@@ -2,7 +2,7 @@
   <div class="goods">
     <div class="menu-wrapper">
       <ul>
-        <li v-for="(item,index) in goods" :key="index" class="menu-item" :class="{'active':index===currentIndex}"
+        <li v-for="(item,index) in goods" :key="index" class="menu-item" :class="{'active':index === currentIndex}"
             @click="selectMenu(index,$event)" ref="menu-list-hook">
           <span class="text border-1px">
             <class-map v-show="item.type > 0" :index="item.type" :num="3"></class-map>{{item.name}}</span>
@@ -89,7 +89,7 @@
       };
     },
     created() {
-      this.$http.get('/api/goods').then(response => {
+      this.$http.get(process.env.HOST + '/api/goods').then(response => {
         let result = response.body;
         if (CONSTANT.RESULT_CODE.SUCCESS === result.errno) {
           this.$data.goods = result.data;
@@ -173,13 +173,15 @@
       },
       selectFoods() {
         let foods = [];
-        this.goods.forEach(good => {
-          good.foods.forEach(food => {
-            if (food.count && food.count > 0) {
-              foods.push(food);
-            }
+        if (this.goods && this.goods instanceof Array) {
+          this.goods.forEach(good => {
+            good.foods.forEach(food => {
+              if (food.count && food.count > 0) {
+                foods.push(food);
+              }
+            });
           });
-        });
+        }
         return foods;
       }
     }

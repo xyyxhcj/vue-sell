@@ -12,7 +12,7 @@ export function urlParse() {
 }
 
 /**
- * 将数据存储到本地
+ * 将数据存储到本地,需要开启浏览器cookie
  */
 export function saveToLocal(id, key, value) {
   // localStorage只能存储json字符串

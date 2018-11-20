@@ -36,7 +36,7 @@
         <!--clearfix:定义清除浮动的样式-->
         <div class="detail-wrapper clearfix">
           <div class="detail-main">
-            <h1 class="name">{{seller.name}}</h1>z`
+            <h1 class="name">{{seller.name}}</h1>
             <div class="star-wrapper">
               <star :size="48" :score="seller.score"></star>
             </div>

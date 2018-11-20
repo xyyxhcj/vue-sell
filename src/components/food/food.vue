@@ -1,10 +1,11 @@
 <template>
   <transition name="move">
-    <div v-show="showFlag" class="food">
+    <!--'v-touch+@swiperight':绑定向右滑动事件,betterScroll需开启'scrollX: true, probeType: 2'-->
+    <v-touch v-show="showFlag" class="food" @swiperight="hidden">
       <div class="food-content">
         <div class="image-header">
           <img :src="food.image"/>
-          <div class="back" @click="showFlag = false">
+          <div class="back" @click="hidden">
             <i class="icon-arrow_lift"></i>
           </div>
         </div>
@@ -51,7 +52,7 @@
           </div>
         </div>
       </div>
-    </div>
+    </v-touch>
   </transition>
 </template>
 
@@ -84,13 +85,17 @@
           if (this.foodScroll && this.foodScroll instanceof BScroll) {
             this.foodScroll.refresh();
           } else {
-            this.foodScroll = new BScroll('.food', {click: true});
+            // 'scrollX: true':开启横向滚动
+            this.foodScroll = new BScroll('.food', {click: true, scrollX: true, probeType: 2});
           }
         });
       },
       show() {
         this.showFlag = true;
         this._initScroll();
+      },
+      hidden() {
+        this.showFlag = false;
       },
       addCart(event, num) {
         if (event._constructed) {

@@ -39,7 +39,7 @@
       };
     },
     created() {
-      this.$http.get('/api/seller?id=' + this.seller.id).then(response => {
+      this.$http.get(process.env.HOST + '/api/seller?id=' + this.seller.id).then(response => {
         let result = response.body;
         if (CONSTANT.RESULT_CODE.SUCCESS === result.errno) {
           // 'Object.assign':为对象扩展属性(不删除原属性)
