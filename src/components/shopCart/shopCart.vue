@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="shopCart">
-      <div class="content" @click="total.count > 0 ? fold = !fold:''">
+      <div class="content" @click="toggle">
         <div class="content-left">
           <div class="logo-wrapper">
             <div class="logo" :class="{'highlight':total.count > 0}">
@@ -104,9 +104,7 @@
       }
     },
     created() {
-      this.$nextTick(() => {
-        this._initScroll();
-      });
+      this._initScroll();
     },
     data() {
       return {
@@ -180,8 +178,14 @@
       },
       // 初始化滚动条
       _initScroll() {
-        // 'click: true':开启移动端派发点击事件
-        this.cartScroll = new BScroll('.list-content', {click: true});
+        this.$nextTick(() => {
+          if (this.cartScroll && this.cartScroll instanceof BScroll) {
+            this.cartScroll.refresh();
+          } else {
+            // 'click: true':开启移动端派发点击事件
+            this.cartScroll = new BScroll('.list-content', {click: true});
+          }
+        });
       },
       empty() {
         this.selectFoods.forEach(food => {
@@ -192,6 +196,14 @@
       pay() {
         if (this.total.price >= this.minPrice) {
           window.alert(`支付${this.total.price}`);
+        }
+      },
+      toggle() {
+        if (this.total.count > 0) {
+          this.fold = !this.fold;
+          if (!this.fold) {
+            this._initScroll();
+          }
         }
       }
     }
