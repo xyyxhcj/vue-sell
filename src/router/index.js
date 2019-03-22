@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Router from 'vue-router';
+// VueResource:基于全局Vue对象使用http
 import VueResource from 'vue-resource';
 // @:配置在webpack.base.conf.js中的别名
 import goods from '@/components/goods/goods';

@@ -8,8 +8,7 @@ import router from './router';
 // vueTouch左右滑动效果
 import './common/stylus/index.styl';
 
-// Vue.use(VueRouter);
-// Vue.config.productionTip = false;
+Vue.config.productionTip = false;
 // 使用左右滑动监听时需注册VueTouch(标签'v-touch')
 var VueTouch = require('vue-touch');
 Vue.use(VueTouch, {name: 'v-touch'});
